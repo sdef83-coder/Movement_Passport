@@ -1,0 +1,144 @@
+# Movement Passport — Suivi du projet
+
+## Objectif général
+
+Movement Passport est un projet Python visant à analyser automatiquement des mouvements humains à partir d’une webcam ou d’une vidéo.
+Entrée principale : vidéo enregistrée
+Entrée secondaire : webcam en temps réel
+Cible : kiné / sport-santé / prévention
+Approche : tests standardisés + mesures biomécaniques + contrôle qualité + recommandations prudentes
+
+L’objectif final est de construire un outil capable de :
+- détecter le squelette ;
+- calculer des variables biomécaniques ;
+- contrôler la qualité des données ;
+- générer des résultats exploitables ;
+- suivre l’évolution d’un utilisateur dans le temps.
+
+---
+
+## Version actuelle
+
+### Test implémenté
+
+FPPA en vue frontale.
+
+FPPA signifie Frontal Plane Projection Angle. Il est utilisé ici comme estimation 2D de l’alignement hanche-genou-cheville en vue de face.
+
+---
+
+## Ce que fait le code actuellement
+
+1. Ouvre la webcam.
+2. Détecte le corps avec MediaPipe Pose.
+3. Récupère les marqueurs :
+   - hanche gauche ;
+   - genou gauche ;
+   - cheville gauche ;
+   - hanche droite ;
+   - genou droit ;
+   - cheville droite.
+4. Contrôle la visibilité de ces marqueurs.
+5. Calcule le FPPA gauche et droit si les marqueurs sont fiables.
+6. Met les valeurs FPPA à NaN si les données ne sont pas fiables.
+7. Affiche en temps réel :
+   - le squelette ;
+   - les valeurs FPPA ;
+   - un avertissement si les données sont non fiables ;
+   - les consignes de placement caméra.
+8. Enregistre les résultats frame par frame.
+9. Crée automatiquement un dossier de session.
+10. Sauvegarde :
+   - un CSV complet ;
+   - un résumé texte ;
+   - un fichier de métadonnées ;
+   - un graphique FPPA en fonction du temps.
+
+---
+
+## Fichiers générés
+
+Pour chaque session, le programme crée un dossier :
+
+results/fppa_front_view_DATE_HEURE/
+
+Ce dossier contient :
+
+- fppa_results.csv
+- fppa_summary.txt
+- metadata.txt
+- fppa_plot.png
+
+---
+
+## Architecture actuelle
+
+config.py  
+Contient les chemins principaux du projet.
+
+scripts/main.py  
+Script principal qui orchestre l’analyse.
+
+biomechanics/angles.py  
+Contient la fonction mathématique de calcul d’angle.
+
+biomechanics/fppa.py  
+Contient la fonction biomécanique de calcul du FPPA.
+
+vision/landmarks.py  
+Contient les fonctions permettant d’extraire les coordonnées et la visibilité des marqueurs.
+
+quality/checks.py  
+Contient les contrôles qualité.
+
+ui/display.py  
+Contient les fonctions d’affichage sur la vidéo.
+
+reporting/summary.py  
+Construit le DataFrame et calcule le résumé statistique.
+
+reporting/saving.py  
+Sauvegarde les fichiers CSV, TXT et métadonnées.
+
+reporting/plotting.py  
+Crée les graphiques.
+
+---
+
+## Logique qualité
+
+Les données sont considérées fiables si les marqueurs nécessaires au FPPA ont une visibilité suffisante.
+
+Si les marqueurs sont fiables :
+- le FPPA est calculé.
+
+Si les marqueurs ne sont pas fiables :
+- le FPPA est remplacé par NaN ;
+- la frame est conservée dans le CSV ;
+- le graphique affiche une rupture naturelle ;
+- la frame est exclue du résumé statistique.
+
+---
+
+## Limites actuelles
+
+- Analyse uniquement 2D.
+- Dépend fortement du placement de la caméra.
+- Le FPPA ne doit pas être interprété comme une mesure 3D réelle du valgus.
+- L’analyse est limitée pour l’instant à la webcam.
+- Pas encore de détection automatique d’exercice.
+- Pas encore de score clinique.
+- Pas encore de recommandations d’exercices.
+
+---
+
+## Prochaine étape prévue
+
+Créer un module de test clinique :
+
+analyze_fppa_front_view()
+
+Objectif :
+- sortir la logique d’analyse de main.py ;
+- préparer l’ajout futur d’autres tests ;
+- rendre le projet plus modulaire et évolutif.
