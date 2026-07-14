@@ -195,6 +195,134 @@ def compute_repetition_metrics(
         2,
     )
 
+    # ========================================================
+    # Asymétrie frontale gauche / droite
+    # ========================================================
+
+    left_peak = metrics.get(
+        "left_peak_deviation_percent",
+        np.nan,
+    )
+    right_peak = metrics.get(
+        "right_peak_deviation_percent",
+        np.nan,
+    )
+
+    left_peak_signed = metrics.get(
+        "left_peak_signed_deviation_percent",
+        np.nan,
+    )
+    right_peak_signed = metrics.get(
+        "right_peak_signed_deviation_percent",
+        np.nan,
+    )
+
+    left_peak_time_s = metrics.get(
+        "left_peak_deviation_time_from_start_s",
+        np.nan,
+    )
+    right_peak_time_s = metrics.get(
+        "right_peak_deviation_time_from_start_s",
+        np.nan,
+    )
+
+    left_peak_cycle = metrics.get(
+        "left_peak_deviation_cycle_percent",
+        np.nan,
+    )
+    right_peak_cycle = metrics.get(
+        "right_peak_deviation_cycle_percent",
+        np.nan,
+    )
+
+    # --------------------------------------------------------
+    # Différence d'amplitude
+    # --------------------------------------------------------
+    if np.isfinite(left_peak) and np.isfinite(right_peak):
+        amplitude_difference = abs(left_peak - right_peak)
+
+        metrics["frontal_amplitude_difference_percent"] = round(
+            amplitude_difference,
+            2,
+        )
+
+        mean_amplitude = (left_peak + right_peak) / 2
+
+        metrics["frontal_amplitude_asymmetry_index_percent"] = (
+            round(
+                amplitude_difference / mean_amplitude * 100,
+                1,
+            )
+            if mean_amplitude > 0
+            else np.nan
+        )
+
+        if left_peak > right_peak:
+            metrics["greater_deviation_side"] = "left"
+        elif right_peak > left_peak:
+            metrics["greater_deviation_side"] = "right"
+        else:
+            metrics["greater_deviation_side"] = "equal"
+
+    else:
+        metrics["frontal_amplitude_difference_percent"] = np.nan
+        metrics["frontal_amplitude_asymmetry_index_percent"] = np.nan
+        metrics["greater_deviation_side"] = "not_detected"
+
+    # --------------------------------------------------------
+    # Différence temporelle entre les pics
+    # --------------------------------------------------------
+    if np.isfinite(left_peak_time_s) and np.isfinite(right_peak_time_s):
+        timing_difference_s = abs(left_peak_time_s - right_peak_time_s)
+
+        metrics["frontal_peak_timing_difference_s"] = round(
+            timing_difference_s,
+            2,
+        )
+
+        if left_peak_time_s < right_peak_time_s:
+            metrics["earlier_peak_side"] = "left"
+        elif right_peak_time_s < left_peak_time_s:
+            metrics["earlier_peak_side"] = "right"
+        else:
+            metrics["earlier_peak_side"] = "simultaneous"
+
+    else:
+        metrics["frontal_peak_timing_difference_s"] = np.nan
+        metrics["earlier_peak_side"] = "not_detected"
+
+    if np.isfinite(left_peak_cycle) and np.isfinite(right_peak_cycle):
+        metrics["frontal_peak_timing_difference_cycle_percent"] = round(
+            abs(left_peak_cycle - right_peak_cycle),
+            1,
+        )
+    else:
+        metrics["frontal_peak_timing_difference_cycle_percent"] = np.nan
+
+    # --------------------------------------------------------
+    # Pattern bilatéral
+    # --------------------------------------------------------
+    if np.isfinite(left_peak_signed) and np.isfinite(right_peak_signed):
+        if left_peak_signed < 0 and right_peak_signed < 0:
+            bilateral_pattern = "bilateral_valgus"
+
+        elif left_peak_signed > 0 and right_peak_signed > 0:
+            bilateral_pattern = "bilateral_varus"
+
+        elif left_peak_signed < 0 and right_peak_signed > 0:
+            bilateral_pattern = "left_valgus_right_varus"
+
+        elif left_peak_signed > 0 and right_peak_signed < 0:
+            bilateral_pattern = "left_varus_right_valgus"
+
+        else:
+            bilateral_pattern = "neutral_or_mixed"
+
+        metrics["bilateral_peak_pattern"] = bilateral_pattern
+
+    else:
+        metrics["bilateral_peak_pattern"] = "not_detected"
+
     ##############################
     # Vitesse verticale du bassin
     ##############################

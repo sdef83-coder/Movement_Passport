@@ -304,3 +304,218 @@ def plot_fppa(
     plt.close(fig)
 
     return figure_path
+
+
+def plot_mean_cycle(
+    mean_cycle,
+    results_folder,
+):
+    """
+    Affiche les cycles individuels, la moyenne et la variabilité.
+    """
+
+    if mean_cycle is None:
+        return None
+
+    cycle_percent = mean_cycle["cycle_percent"]
+
+    fig, (
+        ax_pelvis,
+        ax_deviation,
+        ax_velocity,
+    ) = plt.subplots(
+        3,
+        1,
+        figsize=(11, 10),
+        sharex=True,
+    )
+
+    # ========================================================
+    # 1. Pelvis
+    # ========================================================
+    for cycle in mean_cycle["pelvis_cycles"]:
+        ax_pelvis.plot(
+            cycle_percent,
+            cycle,
+            linewidth=1,
+            alpha=0.35,
+            color="gray",
+        )
+
+    pelvis_line = ax_pelvis.plot(
+        cycle_percent,
+        mean_cycle["pelvis_mean"],
+        linewidth=2.5,
+        label="Cycle moyen",
+    )[0]
+
+    pelvis_color = pelvis_line.get_color()
+
+    ax_pelvis.fill_between(
+        cycle_percent,
+        mean_cycle["pelvis_mean"] - mean_cycle["pelvis_sd"],
+        mean_cycle["pelvis_mean"] + mean_cycle["pelvis_sd"],
+        alpha=0.25,
+        color=pelvis_color,
+        label="Moyenne ± 1 ET",
+    )
+
+    ax_pelvis.set_ylabel("Déplacement vertical\ndu pelvis")
+    ax_pelvis.invert_yaxis()
+
+    ax_pelvis.set_title("Cycle moyen du squat frontal")
+
+    ax_pelvis.grid(True)
+    ax_pelvis.legend()
+
+    # L'axe vertical est laissé non inversé :
+    # une valeur positive correspond à une descente.
+
+    # ========================================================
+    # 2. Déviation frontale
+    # ========================================================
+    for cycle in mean_cycle["left_deviation_cycles"]:
+        ax_deviation.plot(
+            cycle_percent,
+            cycle,
+            linewidth=0.8,
+            alpha=0.25,
+            color="gray",
+        )
+
+    for cycle in mean_cycle["right_deviation_cycles"]:
+        ax_deviation.plot(
+            cycle_percent,
+            cycle,
+            linewidth=0.8,
+            alpha=0.25,
+            linestyle="--",
+            color="gray",
+        )
+
+    left_line = ax_deviation.plot(
+        cycle_percent,
+        mean_cycle["left_deviation_mean"],
+        linewidth=2.5,
+        label="Moyenne gauche",
+    )[0]
+
+    right_line = ax_deviation.plot(
+        cycle_percent,
+        mean_cycle["right_deviation_mean"],
+        linewidth=2.5,
+        label="Moyenne droite",
+    )[0]
+
+    ax_deviation.fill_between(
+        cycle_percent,
+        mean_cycle["left_deviation_mean"] - mean_cycle["left_deviation_sd"],
+        mean_cycle["left_deviation_mean"] + mean_cycle["left_deviation_sd"],
+        color=left_line.get_color(),
+        alpha=0.20,
+    )
+
+    ax_deviation.fill_between(
+        cycle_percent,
+        mean_cycle["right_deviation_mean"] - mean_cycle["right_deviation_sd"],
+        mean_cycle["right_deviation_mean"] + mean_cycle["right_deviation_sd"],
+        color=right_line.get_color(),
+        alpha=0.20,
+    )
+
+    ax_deviation.axhline(
+        0,
+        linestyle=":",
+        linewidth=1.5,
+        color="black",
+    )
+
+    ax_deviation.axhspan(
+        -2,
+        2,
+        alpha=0.08,
+        color="gray",
+        label="Zone neutre provisoire",
+    )
+
+    ax_deviation.set_ylabel("Déviation signée (%)")
+
+    ax_deviation.text(
+        0.01,
+        0.04,
+        "Négatif = valgus | Positif = varus",
+        transform=ax_deviation.transAxes,
+        fontsize=9,
+    )
+
+    ax_deviation.grid(True)
+    ax_deviation.legend()
+
+    # ========================================================
+    # 3. Vitesse verticale
+    # ========================================================
+    for cycle in mean_cycle["velocity_cycles"]:
+        ax_velocity.plot(
+            cycle_percent,
+            cycle,
+            linewidth=1,
+            alpha=0.30,
+            color="gray",
+        )
+
+    velocity_line = ax_velocity.plot(
+        cycle_percent,
+        mean_cycle["velocity_mean"],
+        linewidth=2.5,
+        label="Cycle moyen",
+    )[0]
+
+    velocity_color = velocity_line.get_color()
+
+    ax_velocity.fill_between(
+        cycle_percent,
+        mean_cycle["velocity_mean"] - mean_cycle["velocity_sd"],
+        mean_cycle["velocity_mean"] + mean_cycle["velocity_sd"],
+        alpha=0.25,
+        color=velocity_color,
+        label="Moyenne ± 1 ET",
+    )
+
+    ax_velocity.axhline(
+        0,
+        linestyle=":",
+        linewidth=1.5,
+        color="black",
+    )
+
+    ax_velocity.set_xlabel("Cycle du squat (%)")
+
+    ax_velocity.set_ylabel("Vitesse verticale\n(unités norm./s)")
+
+    ax_velocity.text(
+        0.01,
+        0.04,
+        "Positive = descente | Négative = remontée",
+        transform=ax_velocity.transAxes,
+        fontsize=9,
+    )
+
+    ax_velocity.grid(True)
+    ax_velocity.legend()
+
+    figure_path = os.path.join(
+        results_folder,
+        "mean_cycle_plot.png",
+    )
+
+    fig.tight_layout()
+
+    fig.savefig(
+        figure_path,
+        dpi=300,
+        bbox_inches="tight",
+    )
+
+    plt.close(fig)
+
+    return figure_path

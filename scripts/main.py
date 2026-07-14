@@ -28,7 +28,6 @@ from config import RESULTS_FOLDER
 from quality.checks import check_session_duration
 
 from ui.display import (
-    display_fppa_results,
     display_quality_warning,
     display_instructions,
     display_session_state,
@@ -41,16 +40,12 @@ from reporting.summary import (
     build_fppa_dataframe,
 )
 
-from reporting.plotting import (
-    plot_fppa,
-    plot_movement_analysis,
-)
-
 from reporting.saving import (
     save_dataframe_csv,
     save_summary_txt,
     create_session_folder,
     save_metadata_txt,
+    save_text_report,
 )
 
 from tests.fppa_front_view import analyze_fppa_front_view
@@ -79,6 +74,21 @@ from ui.gestures import detect_hand_raise
 
 from reporting.clinical_summary import (
     build_clinical_repetitions_dataframe,
+)
+
+from reporting.clinical_report import build_clinical_report
+
+from movement_analysis.mean_cycle import (
+    build_mean_cycle,
+    build_mean_cycle_dataframe,
+    build_mean_cycle_summary_dataframe,
+    summarize_mean_cycle,
+)
+
+from reporting.plotting import (
+    plot_fppa,
+    plot_movement_analysis,
+    plot_mean_cycle,
 )
 
 # ----------------------------
@@ -313,6 +323,9 @@ filtered_pelvis_y = filter_signal(
     method="moving_average",
     window_size=7,
 )
+
+df["pelvis_y_filtered"] = filtered_pelvis_y
+
 pelvis_velocity = np.gradient(
     filtered_pelvis_y,
     df["time_s"],
@@ -371,6 +384,21 @@ for rep in repetitions:
 
 repetitions_df = pd.DataFrame(repetition_metrics)
 clinical_repetitions_df = build_clinical_repetitions_dataframe(repetitions_df)
+
+mean_cycle = build_mean_cycle(
+    df=df,
+    repetitions=repetitions,
+    n_points=101,
+)
+
+mean_cycle_df = build_mean_cycle_dataframe(mean_cycle)
+
+mean_cycle_summary = summarize_mean_cycle(
+    mean_cycle=mean_cycle,
+    repetitions=repetitions,
+)
+
+mean_cycle_summary_df = build_mean_cycle_summary_dataframe(mean_cycle_summary)
 
 print("Répétitions détectées :")
 for rep in repetitions:
@@ -456,7 +484,6 @@ metadata = {
 metadata_path = save_metadata_txt(metadata, session_folder)
 print(f"Métadonnées sauvegardées dans : {metadata_path}")
 
-
 # ----------------------------
 # 11. Sauvegardes CSV et graphique
 # ----------------------------
@@ -504,6 +531,43 @@ repetitions_path = save_dataframe_csv(
 )
 
 print(f"Répétitions sauvegardées dans : {repetitions_path}")
+
+mean_cycle_csv_path = save_dataframe_csv(
+    mean_cycle_df,
+    session_folder,
+    "mean_cycle.csv",
+)
+
+print("Cycle moyen sauvegardé dans : " f"{mean_cycle_csv_path}")
+
+mean_cycle_figure_path = plot_mean_cycle(
+    mean_cycle=mean_cycle,
+    results_folder=session_folder,
+)
+
+print("Figure du cycle moyen sauvegardée dans : " f"{mean_cycle_figure_path}")
+
+clinical_report = build_clinical_report(
+    clinical_df=clinical_repetitions_df,
+    metadata=metadata,
+    mean_cycle_summary=mean_cycle_summary,
+)
+
+clinical_report_path = save_text_report(
+    clinical_report,
+    session_folder,
+    "clinical_report.txt",
+)
+
+print("Rapport clinique sauvegardé dans : " f"{clinical_report_path}")
+
+mean_cycle_summary_path = save_dataframe_csv(
+    mean_cycle_summary_df,
+    session_folder,
+    "mean_cycle_summary.csv",
+)
+
+print("Résumé du cycle moyen sauvegardé dans : " f"{mean_cycle_summary_path}")
 
 # ----------------------------
 # 12. Fermeture propre

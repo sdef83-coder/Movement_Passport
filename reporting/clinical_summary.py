@@ -77,6 +77,22 @@ def build_clinical_repetitions_dataframe(repetitions_df):
             "mean_ascent_velocity": rep["mean_ascent_velocity"],
             "peak_ascent_velocity": rep["peak_ascent_velocity"],
             "velocity_unit": rep["velocity_unit"],
+            # Asymétrie
+            "frontal_amplitude_difference_percent": rep[
+                "frontal_amplitude_difference_percent"
+            ],
+            "frontal_amplitude_asymmetry_index_percent": rep[
+                "frontal_amplitude_asymmetry_index_percent"
+            ],
+            "greater_deviation_side": rep["greater_deviation_side"],
+            "frontal_peak_timing_difference_s": rep[
+                "frontal_peak_timing_difference_s"
+            ],
+            "frontal_peak_timing_difference_cycle_percent": rep[
+                "frontal_peak_timing_difference_cycle_percent"
+            ],
+            "earlier_peak_side": rep["earlier_peak_side"],
+            "bilateral_peak_pattern": rep["bilateral_peak_pattern"],
         }
 
         clinical_rows.append(clinical_row)

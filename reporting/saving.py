@@ -50,3 +50,27 @@ def save_metadata_txt(metadata, results_folder, filename="metadata.txt"):
             file.write(f"{key} : {value}\n")
 
     return txt_path
+
+
+def save_text_report(
+    report_text,
+    session_folder,
+    filename,
+):
+    """
+    Sauvegarde un rapport texte brut.
+    """
+
+    report_path = os.path.join(
+        session_folder,
+        filename,
+    )
+
+    with open(
+        report_path,
+        "w",
+        encoding="utf-8",
+    ) as file:
+        file.write(report_text)
+
+    return report_path
