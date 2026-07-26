@@ -1,0 +1,16 @@
+Métadonnées de session
+====================
+
+test_name : fppa_front_view
+camera_view : front
+source : webcam
+measure : left_fppa, right_fppa
+unit : degrees
+n_frames_analyzed : 577
+duration_s : 31.84
+quality_check : OK
+visibility_ok_percent : 100.0
+visibility_quality : OK
+global_interpretation : Contrôle frontal du genou à surveiller
+pelvis_y_baseline_mean : 0.4276173063299873
+pelvis_y_baseline_std : 0.0003343689868004848
