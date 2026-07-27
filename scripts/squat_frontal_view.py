@@ -23,6 +23,8 @@ import pandas as pd
 # ----------------------------
 # 2. Fonctions du projet
 # ----------------------------
+from app.analysis_pipeline import run_pose_analysis
+
 from config import RESULTS_FOLDER
 
 from quality.checks import check_session_duration

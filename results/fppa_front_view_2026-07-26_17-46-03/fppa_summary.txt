@@ -1,0 +1,19 @@
+Résumé FPPA
+====================
+
+left_mean : 168.8
+right_mean : 169.8
+left_min : 145.8
+right_min : 151.8
+left_max : 179.9
+right_max : 179.9
+event_name : maximum_dynamic_knee_deviation
+left_event_frame : 154
+left_event_time_s : 6.53
+left_event_fppa : 145.8
+right_event_frame : 53
+right_event_time_s : 2.36
+right_event_fppa : 151.8
+left_status : Alignement à surveiller
+right_status : Alignement à surveiller
+global_message : Contrôle frontal du genou à surveiller
