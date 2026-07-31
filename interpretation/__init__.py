@@ -1,0 +1,1 @@
+"""Interprétation descriptive des mesures."""

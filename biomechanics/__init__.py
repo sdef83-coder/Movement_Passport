@@ -1,0 +1,1 @@
+"""Fonctions biomécaniques partagées."""

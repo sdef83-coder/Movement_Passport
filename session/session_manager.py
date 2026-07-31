@@ -39,6 +39,14 @@ class SessionManager:
     def stop_recording(self):
         self.state = "FINISHED"
 
+    def reset_to_waiting(self):
+        """Annule le démarrage et exige une nouvelle validation utilisateur."""
+
+        self.state = "WAITING"
+        self.countdown_start_time = None
+        self.baseline_start_time = None
+        self.recording_start_time = None
+
     def is_waiting(self):
         return self.state == "WAITING"
 
