@@ -1,0 +1,55 @@
+Métadonnées de session
+====================
+
+test_name : squat_side_view
+camera_view : side
+source : webcam
+analysis_side : left
+facing_direction_requested : auto
+facing_direction_resolved : right
+orientation_method : baseline_majority_vote_from_heel_to_foot_index
+n_frames_recorded : 459
+duration_s : 25.7
+visibility_ok_percent : 2.4
+visibility_quality : Visibilité insuffisante
+ankle_internal_angle_baseline_mean_deg : nan
+ankle_internal_angle_baseline_std_deg : nan
+ankle_internal_angle_baseline_n : 0
+foot_inclination_baseline_mean_deg : nan
+foot_inclination_baseline_std_deg : nan
+foot_inclination_baseline_n : 0
+knee_flexion_baseline_mean_deg : nan
+knee_flexion_baseline_std_deg : nan
+knee_flexion_baseline_n : 0
+hip_flexion_baseline_mean_deg : nan
+hip_flexion_baseline_std_deg : nan
+hip_flexion_baseline_n : 0
+trunk_flexion_baseline_mean_deg : nan
+trunk_flexion_baseline_std_deg : nan
+trunk_flexion_baseline_n : 0
+ankle_angle_definition : heel_foot_index_axis_vs_ankle_knee_axis
+processed_visibility_threshold : 0.5
+processed_max_interpolation_gap_s : 0.25
+processed_smoothing_window_s : 0.25
+knee_angular_velocity_definition : time_derivative_of_filtered_relative_knee_flexion_deg_s
+knee_angular_velocity_sign_convention : positive_descent_negative_ascent
+processed_status : Non généré
+processed_error : Baseline sagittale invalide : knee_flexion_mean indisponible; knee_flexion_n < 10; hip_flexion_mean indisponible; hip_flexion_n < 10; trunk_flexion_mean indisponible; trunk_flexion_n < 10; ankle_internal_angle_mean indisponible; ankle_internal_angle_n < 10; foot_inclination_mean indisponible; foot_inclination_n < 10
+segmentation_status : Non générée
+segmentation_error : Traitement des signaux indisponible.
+repetitions_detected : 0
+segmentation_signal : knee_flexion_filtered_deg
+segmentation_min_peak_flexion_deg : 20.0
+segmentation_min_peak_prominence_deg : 15.0
+segmentation_min_peak_distance_s : 0.75
+segmentation_boundary_fraction : 0.1
+segmentation_min_quality_percent : 80.0
+repetition_metrics_status : Non générées
+repetition_metrics_error : None
+sagittal_plot_status : Non généré
+sagittal_plot_error : None
+heel_lift_plot_threshold_deg : 20.0
+secondary_ankle_and_foot_metrics : experimental
+data_stages : raw_only
+sagittal_report_status : Non généré
+sagittal_report_error : None
