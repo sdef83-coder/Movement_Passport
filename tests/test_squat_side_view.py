@@ -35,6 +35,52 @@ def build_left_side_landmarks(
 
 
 class SquatSideViewTests(unittest.TestCase):
+    def test_angles_are_invariant_to_portrait_and_landscape_aspect_ratio(self):
+        pixel_coordinates = [
+            (420.0, 200.0),  # shoulder
+            (320.0, 450.0),  # hip
+            (520.0, 650.0),  # knee
+            (400.0, 900.0),  # ankle
+            (360.0, 940.0),  # heel
+            (560.0, 940.0),  # foot index
+        ]
+
+        results_by_format = []
+        for image_width, image_height in ((1080.0, 1920.0), (1920.0, 1080.0)):
+            normalized_landmarks = build_left_side_landmarks(
+                [
+                    (x_value / image_width, y_value / image_height)
+                    for x_value, y_value in pixel_coordinates
+                ]
+            )
+            results_by_format.append(
+                analyze_squat_side_view(
+                    normalized_landmarks,
+                    FakePoseLandmark,
+                    image_width=image_width,
+                    image_height=image_height,
+                    side="left",
+                    facing_direction="right",
+                    neutral_ankle_angle=90.0,
+                    neutral_foot_inclination=0.0,
+                )
+            )
+
+        angle_keys = (
+            "knee_flexion_deg",
+            "hip_flexion_deg",
+            "trunk_flexion_deg",
+            "ankle_internal_angle_deg",
+            "ankle_dorsiflexion_deg",
+            "foot_inclination_deg",
+        )
+        for angle_key in angle_keys:
+            self.assertAlmostEqual(
+                results_by_format[0][angle_key],
+                results_by_format[1][angle_key],
+                places=7,
+            )
+
     def test_auto_direction_preserves_mirrored_squat_measurements(self):
         right_facing_landmarks = build_left_side_landmarks(
             [
@@ -60,6 +106,8 @@ class SquatSideViewTests(unittest.TestCase):
         right_results = analyze_squat_side_view(
             right_facing_landmarks,
             FakePoseLandmark,
+            image_width=1.0,
+            image_height=1.0,
             side="left",
             facing_direction="auto",
             neutral_ankle_angle=90.0,
@@ -68,6 +116,8 @@ class SquatSideViewTests(unittest.TestCase):
         left_results = analyze_squat_side_view(
             left_facing_landmarks,
             FakePoseLandmark,
+            image_width=1.0,
+            image_height=1.0,
             side="left",
             facing_direction="auto",
             neutral_ankle_angle=90.0,
@@ -125,6 +175,8 @@ class SquatSideViewTests(unittest.TestCase):
         results = analyze_squat_side_view(
             landmarks,
             FakePoseLandmark,
+            image_width=1.0,
+            image_height=1.0,
             side="left",
         )
 

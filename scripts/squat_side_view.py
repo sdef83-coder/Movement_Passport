@@ -227,6 +227,8 @@ def save_side_raw_session(
     analysis_side: str,
     baseline_visibility_summary: dict | None = None,
     failed_baseline_attempts: int = 0,
+    source: str = "webcam",
+    acquisition_metadata: dict | None = None,
 ) -> (
     tuple[
         str,
@@ -398,7 +400,7 @@ def save_side_raw_session(
     metadata = {
         "test_name": "squat_side_view",
         "camera_view": "side",
-        "source": "webcam",
+        "source": source,
         "analysis_side": analysis_side,
         "facing_direction_requested": FACING_DIRECTION,
         "facing_direction_resolved": (
@@ -410,6 +412,9 @@ def save_side_raw_session(
             "baseline_majority_vote_from_heel_to_foot_index"
             if FACING_DIRECTION == "auto"
             else "manual"
+        ),
+        "angle_coordinate_system": (
+            "pixel_coordinates_aspect_ratio_corrected"
         ),
         "n_frames_recorded": len(dataframe),
         "duration_s": round(float(dataframe["time_s"].max()), 2),
@@ -571,6 +576,9 @@ def save_side_raw_session(
             )
         ),
     }
+
+    if acquisition_metadata:
+        metadata.update(acquisition_metadata)
 
     for marker_name in SIDE_MARKERS:
         metadata[f"baseline_{marker_name}_visibility_mean"] = (
@@ -794,6 +802,8 @@ def main() -> list[dict[str, float | str]]:
                 results_values = analyze_squat_side_view(
                     landmarks,
                     mp_pose.PoseLandmark,
+                    image_width=image.shape[1],
+                    image_height=image.shape[0],
                     side=analysis_side,
                     facing_direction=(
                         resolved_facing_direction or FACING_DIRECTION
