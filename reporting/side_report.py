@@ -34,6 +34,20 @@ def _side_label(side: str) -> str:
     }.get(str(side), str(side))
 
 
+def _marker_label(marker: str) -> str:
+    return {
+        "shoulder": "épaule",
+        "hip": "hanche",
+        "knee": "genou",
+        "ankle": "cheville",
+        "heel": "talon",
+        "foot_index": "avant-pied",
+        "pose_not_detected": "squelette non détecté",
+        "none": "aucun",
+        "not_detected": "non détecté",
+    }.get(str(marker), str(marker))
+
+
 def _mean_sd_text(values: pd.Series, suffix: str = "°") -> str:
     numeric_values = pd.to_numeric(values, errors="coerce").dropna()
 
@@ -92,6 +106,23 @@ def build_side_report(
                 metadata.get("visibility_ok_percent"), 1, " %"
             )
         )
+        failed_baselines = metadata.get("failed_baseline_attempts")
+
+        if failed_baselines is not None:
+            lines.append(
+                "Tentatives de baseline refusées : "
+                + str(failed_baselines)
+            )
+
+        limiting_marker = metadata.get(
+            "recording_most_frequent_limiting_marker"
+        )
+
+        if limiting_marker is not None:
+            lines.append(
+                "Marqueur limitant le plus fréquent : "
+                + _marker_label(limiting_marker)
+            )
 
     lines.append(
         "Qualité moyenne des répétitions : "

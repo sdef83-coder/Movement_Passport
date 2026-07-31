@@ -73,13 +73,13 @@ def plot_side_mean_cycle(
     )
 
     figure, axes = plt.subplots(
-        4,
+        3,
         1,
-        figsize=(12, 13),
+        figsize=(12, 11),
         sharex=True,
-        gridspec_kw={"height_ratios": [1.1, 1.1, 0.9, 0.9]},
+        gridspec_kw={"height_ratios": [1.35, 1.0, 1.0]},
     )
-    knee_axis, hip_trunk_axis, velocity_axis, secondary_axis = axes
+    flexion_axis, velocity_axis, secondary_axis = axes
 
     for axis in axes:
         axis.axvline(
@@ -90,32 +90,26 @@ def plot_side_mean_cycle(
             alpha=0.7,
             label=(
                 f"Point bas moyen ({mean_bottom_percent:.1f} %)"
-                if axis is knee_axis
+                if axis is flexion_axis
                 else None
             ),
         )
 
     _plot_individual_cycles(
-        knee_axis,
+        flexion_axis,
         cycle_percent,
         mean_cycle["knee_flexion_cycles"],
     )
     _plot_mean_band(
-        knee_axis,
+        flexion_axis,
         cycle_percent,
         mean_cycle["knee_flexion_mean"],
         mean_cycle["knee_flexion_sd"],
         "tab:blue",
         "Genou moyen",
     )
-    knee_axis.set_title(
-        "Cycle moyen du squat — vue latérale "
-        f"(n = {mean_cycle['n_cycles']})"
-    )
-    _style_axis(knee_axis, "Flexion genou (°)")
-
     _plot_mean_band(
-        hip_trunk_axis,
+        flexion_axis,
         cycle_percent,
         mean_cycle["hip_flexion_mean"],
         mean_cycle["hip_flexion_sd"],
@@ -123,14 +117,18 @@ def plot_side_mean_cycle(
         "Hanche moyenne",
     )
     _plot_mean_band(
-        hip_trunk_axis,
+        flexion_axis,
         cycle_percent,
         mean_cycle["trunk_flexion_mean"],
         mean_cycle["trunk_flexion_sd"],
         "tab:green",
         "Tronc moyen",
     )
-    _style_axis(hip_trunk_axis, "Angle relatif (°)")
+    flexion_axis.set_title(
+        "Cycle moyen du squat — vue latérale "
+        f"(n = {mean_cycle['n_cycles']})"
+    )
+    _style_axis(flexion_axis, "Flexion relative (°)")
 
     _plot_individual_cycles(
         velocity_axis,

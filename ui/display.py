@@ -45,10 +45,11 @@ def display_quality_warning(image, visibility_check):
         )
 
 
-def display_instructions(image):
+def display_instructions(image, camera_view="front"):
+    view_label = "Vue laterale" if camera_view == "side" else "Vue de face"
     cv2.putText(
         image,
-        "Vue de face - Corps entier visible - Q pour quitter",
+        f"{view_label} - Corps entier visible - Q pour quitter",
         (20, image.shape[0] - 20),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.6,

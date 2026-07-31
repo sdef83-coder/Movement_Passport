@@ -144,14 +144,15 @@ def analyze_squat_side_view(
         neutral_foot_inclination,
     )
 
-    visibility_values = [
-        selected["shoulder"].visibility,
-        selected["hip"].visibility,
-        selected["knee"].visibility,
-        selected["ankle"].visibility,
-        selected["heel"].visibility,
-        selected["foot_index"].visibility,
-    ]
+    visibility_by_marker = {
+        marker_name: float(marker.visibility)
+        for marker_name, marker in selected.items()
+    }
+    lowest_visibility_marker = min(
+        visibility_by_marker,
+        key=visibility_by_marker.get,
+    )
+    visibility_values = list(visibility_by_marker.values())
 
     visibility_min = float(np.min(visibility_values))
     visibility_check = (
@@ -175,4 +176,9 @@ def analyze_squat_side_view(
         "foot_inclination_relative_deg": foot_inclination_relative,
         "visibility": visibility_check,
         "visibility_min": visibility_min,
+        "lowest_visibility_marker": lowest_visibility_marker,
+        **{
+            f"{marker_name}_visibility": visibility_value
+            for marker_name, visibility_value in visibility_by_marker.items()
+        },
     }

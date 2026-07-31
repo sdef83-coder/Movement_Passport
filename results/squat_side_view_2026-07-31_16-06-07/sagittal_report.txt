@@ -1,0 +1,101 @@
+RAPPORT DESCRIPTIF - ANALYSE SAGITTALE DU SQUAT
+====================================================
+
+1. INFORMATIONS GÉNÉRALES
+------------------------------
+Nombre de répétitions analysées : 6
+Côté analysé : gauche
+Durée de l'enregistrement : 15.14 s
+Visibilité valide : 100.0 %
+Tentatives de baseline refusées : 0
+Marqueur limitant le plus fréquent : aucun
+Qualité moyenne des répétitions : 100.0 %
+
+2. MESURES PRINCIPALES PAR RÉPÉTITION
+------------------------------------------
+Répétition 1
+  Durée : 1.66 s (descente 0.94 s, remontée 0.72 s)
+  Vitesse moyenne du genou — descente : 86.7°/s, remontée : 111.9°/s
+  Point bas — genou : 86.9°, hanche : 90.2°, tronc : 26.3°
+  Pics — genou : 86.9°, hanche : 90.2°, tronc : 26.4°
+  Pic de hanche : point bas à 56.5 % du cycle
+  Pic du tronc : remontée à 59.3 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+Répétition 2
+  Durée : 1.58 s (descente 0.84 s, remontée 0.74 s)
+  Vitesse moyenne du genou — descente : 93.4°/s, remontée : 104.5°/s
+  Point bas — genou : 83.8°, hanche : 85.0°, tronc : 25.5°
+  Pics — genou : 83.8°, hanche : 85.0°, tronc : 25.5°
+  Pic de hanche : descente à 50.2 % du cycle
+  Pic du tronc : point bas à 53.1 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+Répétition 3
+  Durée : 1.68 s (descente 0.98 s, remontée 0.70 s)
+  Vitesse moyenne du genou — descente : 81.0°/s, remontée : 115.5°/s
+  Point bas — genou : 86.6°, hanche : 87.7°, tronc : 25.9°
+  Pics — genou : 86.6°, hanche : 87.7°, tronc : 26.1°
+  Pic de hanche : descente à 55.7 % du cycle
+  Pic du tronc : descente à 51.8 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+Répétition 4
+  Durée : 1.63 s (descente 0.85 s, remontée 0.78 s)
+  Vitesse moyenne du genou — descente : 93.8°/s, remontée : 103.8°/s
+  Point bas — genou : 87.0°, hanche : 88.7°, tronc : 25.9°
+  Pics — genou : 87.0°, hanche : 88.8°, tronc : 26.1°
+  Pic de hanche : remontée à 55.9 % du cycle
+  Pic du tronc : remontée à 55.9 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+Répétition 5
+  Durée : 1.68 s (descente 0.86 s, remontée 0.81 s)
+  Vitesse moyenne du genou — descente : 94.3°/s, remontée : 99.9°/s
+  Point bas — genou : 87.6°, hanche : 87.9°, tronc : 25.6°
+  Pics — genou : 87.6°, hanche : 87.9°, tronc : 25.8°
+  Pic de hanche : remontée à 54.2 % du cycle
+  Pic du tronc : remontée à 57.0 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+Répétition 6
+  Durée : 1.59 s (descente 0.82 s, remontée 0.76 s)
+  Vitesse moyenne du genou — descente : 98.2°/s, remontée : 106.0°/s
+  Point bas — genou : 89.0°, hanche : 89.4°, tronc : 25.7°
+  Pics — genou : 89.0°, hanche : 89.7°, tronc : 26.2°
+  Pic de hanche : remontée à 54.9 % du cycle
+  Pic du tronc : remontée à 57.7 % du cycle
+  Qualité : 100.0 %; données interpolées : 0.0 %
+
+3. SYNTHÈSE DESCRIPTIVE
+------------------------------
+Pic moyen de flexion du genou : 86.8° ± 1.6°
+Pic moyen de flexion de hanche : 88.2° ± 1.7°
+Pic moyen de flexion du tronc : 26.0° ± 0.3°
+Durée moyenne : 1.6 s ± 0.0 s
+Vitesse moyenne de descente du genou : 91.2°/s ± 5.7°/s
+Vitesse moyenne de remontée du genou : 107.0°/s ± 5.2°/s
+Plus grande flexion du genou : répétition 6 (89.0°).
+Plus grande flexion du tronc : répétition 1 (26.4°).
+
+4. MESURES SECONDAIRES ET EXPÉRIMENTALES
+----------------------------------------------
+Pic moyen de dorsiflexion relative : 8.5° ± 1.6°
+Pic moyen d'inclinaison relative du pied : 35.4° ± 2.8°
+Répétitions au-dessus du seuil expérimental du pied (20.0°) : 6/6.
+Ces mesures sont fournies à titre exploratoire et ne doivent pas être interprétées comme une confirmation clinique.
+
+5. CYCLE MOYEN
+------------------------------
+Nombre de répétitions incluses : 6.
+Point bas moyen : 54.0 % du cycle ± 2.9 %.
+Pic du cycle moyen — genou : 86.5°, hanche : 87.9°, tronc : 25.9°.
+Vitesse du cycle moyen — descente : 91.8°/s, remontée : 105.3°/s.
+Le graphique présente les cycles individuels, leur moyenne et la bande de variabilité ± 1 écart-type.
+
+6. LIMITES
+------------------------------
+Les angles sont issus d'une estimation vidéo 2D et sont corrigés par rapport à la posture de baseline.
+Ils permettent surtout des comparaisons entre répétitions réalisées dans les mêmes conditions.
+La dorsiflexion et l'inclinaison du pied dépendent fortement de la qualité des points du talon et de l'avant-pied.
+Ce rapport est descriptif et ne constitue pas un diagnostic médical.

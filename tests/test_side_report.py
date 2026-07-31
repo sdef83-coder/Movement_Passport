@@ -33,6 +33,8 @@ class SideReportTests(unittest.TestCase):
                 "analysis_side": "left",
                 "duration_s": 3.0,
                 "visibility_ok_percent": 100.0,
+                "failed_baseline_attempts": 1,
+                "recording_most_frequent_limiting_marker": "heel",
             },
             summarize_side_mean_cycle(mean_cycle),
         )
@@ -48,6 +50,8 @@ class SideReportTests(unittest.TestCase):
         self.assertIn("Vitesse moyenne de descente du genou", report)
         self.assertIn("5. CYCLE MOYEN", report)
         self.assertIn("Nombre de répétitions incluses : 1", report)
+        self.assertIn("Tentatives de baseline refusées : 1", report)
+        self.assertIn("Marqueur limitant le plus fréquent : talon", report)
         self.assertIn("MESURES SECONDAIRES ET EXPÉRIMENTALES", report)
         self.assertIn("1/1", report)
         self.assertIn("ne constitue pas un diagnostic médical", report)

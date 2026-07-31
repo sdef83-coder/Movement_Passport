@@ -103,6 +103,34 @@ class SquatSideViewTests(unittest.TestCase):
                 0.0,
             )
             self.assertEqual(results["visibility"], "OK")
+            self.assertEqual(
+                results["lowest_visibility_marker"],
+                "shoulder",
+            )
+            self.assertEqual(results["heel_visibility"], 1.0)
+
+    def test_reports_the_lowest_visibility_marker(self):
+        landmarks = build_left_side_landmarks(
+            [
+                (1.0, -1.0),
+                (0.0, 0.0),
+                (1.0, 1.0),
+                (0.0, 2.0),
+                (-0.25, 2.0),
+                (0.75, 2.0),
+            ]
+        )
+        landmarks[FakePoseLandmark.LEFT_HEEL].visibility = 0.25
+
+        results = analyze_squat_side_view(
+            landmarks,
+            FakePoseLandmark,
+            side="left",
+        )
+
+        self.assertEqual(results["visibility"], "Visibilité insuffisante")
+        self.assertEqual(results["lowest_visibility_marker"], "heel")
+        self.assertEqual(results["visibility_min"], 0.25)
 
 
 if __name__ == "__main__":
