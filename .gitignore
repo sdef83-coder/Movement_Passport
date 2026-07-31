@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+ENV/
+
+# Outils et couverture de tests
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE
+.spyproject/
+.vscode/
+.idea/
+
+# Système d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Données générées et potentiellement personnelles
+results/*
+!results/.gitkeep
+data/videos/*
+
+# Journaux d'exécution
+*.log

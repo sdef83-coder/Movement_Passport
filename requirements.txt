@@ -1,0 +1,6 @@
+matplotlib==3.11.0
+mediapipe==0.10.14
+numpy==2.4.6
+opencv-contrib-python==4.11.0.86
+pandas==3.0.3
+scipy==1.17.1
