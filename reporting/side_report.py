@@ -49,6 +49,7 @@ def _mean_sd_text(values: pd.Series, suffix: str = "°") -> str:
 def build_side_report(
     repetition_metrics: pd.DataFrame,
     metadata: dict | None = None,
+    mean_cycle_summary: dict | None = None,
 ) -> str:
     """Génère un rapport sagittal descriptif sans interprétation clinique."""
 
@@ -252,7 +253,77 @@ def build_side_report(
             "Ces mesures sont fournies à titre exploratoire et ne doivent pas "
             "être interprétées comme une confirmation clinique.",
             "",
-            "5. LIMITES",
+            "5. CYCLE MOYEN",
+            "-" * 30,
+        ]
+    )
+
+    if not mean_cycle_summary:
+        lines.append("Le cycle moyen n'a pas pu être calculé.")
+    else:
+        lines.extend(
+            [
+                "Nombre de répétitions incluses : "
+                + str(mean_cycle_summary["n_cycles"])
+                + ".",
+                "Point bas moyen : "
+                + _format_value(
+                    mean_cycle_summary["mean_bottom_cycle_percent"],
+                    1,
+                    " % du cycle",
+                )
+                + " ± "
+                + _format_value(
+                    mean_cycle_summary["bottom_cycle_percent_sd"],
+                    1,
+                    " %",
+                )
+                + ".",
+                "Pic du cycle moyen — genou : "
+                + _format_value(
+                    mean_cycle_summary["peak_knee_flexion_mean"],
+                    1,
+                    "°",
+                )
+                + ", hanche : "
+                + _format_value(
+                    mean_cycle_summary["peak_hip_flexion_mean"],
+                    1,
+                    "°",
+                )
+                + ", tronc : "
+                + _format_value(
+                    mean_cycle_summary["peak_trunk_flexion_mean"],
+                    1,
+                    "°",
+                )
+                + ".",
+                "Vitesse du cycle moyen — descente : "
+                + _format_value(
+                    mean_cycle_summary[
+                        "mean_knee_descent_velocity_deg_s"
+                    ],
+                    1,
+                    "°/s",
+                )
+                + ", remontée : "
+                + _format_value(
+                    mean_cycle_summary[
+                        "mean_knee_ascent_velocity_deg_s"
+                    ],
+                    1,
+                    "°/s",
+                )
+                + ".",
+                "Le graphique présente les cycles individuels, leur moyenne "
+                "et la bande de variabilité ± 1 écart-type.",
+            ]
+        )
+
+    lines.extend(
+        [
+            "",
+            "6. LIMITES",
             "-" * 30,
             "Les angles sont issus d'une estimation vidéo 2D et sont corrigés "
             "par rapport à la posture de baseline.",

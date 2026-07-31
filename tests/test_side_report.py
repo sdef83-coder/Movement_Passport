@@ -5,6 +5,10 @@ import unittest
 from movement_analysis.side_repetition_metrics import (
     build_side_repetition_metrics,
 )
+from movement_analysis.side_mean_cycle import (
+    build_side_mean_cycle,
+    summarize_side_mean_cycle,
+)
 from reporting.side_report import build_side_report
 from tests.test_side_repetition_metrics import (
     build_processed_dataframe,
@@ -18,6 +22,10 @@ class SideReportTests(unittest.TestCase):
             build_processed_dataframe(),
             build_repetitions_dataframe(),
         )
+        mean_cycle = build_side_mean_cycle(
+            build_processed_dataframe(),
+            build_repetitions_dataframe(),
+        )
 
         report = build_side_report(
             metrics,
@@ -26,6 +34,7 @@ class SideReportTests(unittest.TestCase):
                 "duration_s": 3.0,
                 "visibility_ok_percent": 100.0,
             },
+            summarize_side_mean_cycle(mean_cycle),
         )
 
         self.assertIn("ANALYSE SAGITTALE", report)
@@ -37,6 +46,8 @@ class SideReportTests(unittest.TestCase):
             report,
         )
         self.assertIn("Vitesse moyenne de descente du genou", report)
+        self.assertIn("5. CYCLE MOYEN", report)
+        self.assertIn("Nombre de répétitions incluses : 1", report)
         self.assertIn("MESURES SECONDAIRES ET EXPÉRIMENTALES", report)
         self.assertIn("1/1", report)
         self.assertIn("ne constitue pas un diagnostic médical", report)

@@ -20,6 +20,12 @@ import pandas as pd
 
 from baseline.baseline import BaselineRecorder
 from config import RESULTS_FOLDER
+from movement_analysis.side_mean_cycle import (
+    build_side_mean_cycle,
+    build_side_mean_cycle_dataframe,
+    build_side_mean_cycle_summary_dataframe,
+    summarize_side_mean_cycle,
+)
 from movement_analysis.side_repetition_metrics import (
     HEEL_LIFT_SCREENING_THRESHOLD_DEG,
     build_side_repetition_metrics,
@@ -36,6 +42,7 @@ from reporting.saving import (
     save_metadata_txt,
     save_text_report,
 )
+from reporting.side_mean_cycle_plotting import plot_side_mean_cycle
 from reporting.side_plotting import plot_side_analysis
 from reporting.side_report import build_side_report
 from session.session_manager import SessionManager
@@ -183,6 +190,9 @@ def save_side_raw_session(
         str | None,
         str | None,
         str | None,
+        str | None,
+        str | None,
+        str | None,
         str,
     ]
     | None
@@ -210,16 +220,23 @@ def save_side_raw_session(
     processed_dataframe = None
     repetitions_dataframe = None
     repetition_metrics_dataframe = None
+    mean_cycle = None
+    mean_cycle_summary = {}
     processed_csv_path = None
     repetitions_csv_path = None
     repetition_metrics_csv_path = None
     report_path = None
     plot_path = None
+    mean_cycle_csv_path = None
+    mean_cycle_summary_csv_path = None
+    mean_cycle_plot_path = None
     processing_error = None
     segmentation_error = None
     repetition_metrics_error = None
     report_error = None
     plot_error = None
+    mean_cycle_error = None
+    mean_cycle_plot_error = None
     repetitions_count = 0
 
     try:
@@ -269,6 +286,48 @@ def save_side_raw_session(
             )
         except ValueError as error:
             repetition_metrics_error = str(error)
+
+    if processed_dataframe is not None and repetitions_dataframe is not None:
+        try:
+            mean_cycle = build_side_mean_cycle(
+                processed_dataframe,
+                repetitions_dataframe,
+                n_points=101,
+            )
+
+            if mean_cycle is None:
+                mean_cycle_error = (
+                    "Aucune répétition valide pour le cycle moyen."
+                )
+            else:
+                mean_cycle_dataframe = build_side_mean_cycle_dataframe(
+                    mean_cycle
+                )
+                mean_cycle_summary = summarize_side_mean_cycle(mean_cycle)
+                mean_cycle_summary_dataframe = (
+                    build_side_mean_cycle_summary_dataframe(mean_cycle_summary)
+                )
+                mean_cycle_csv_path = save_dataframe_csv(
+                    mean_cycle_dataframe,
+                    session_folder,
+                    "sagittal_mean_cycle.csv",
+                )
+                mean_cycle_summary_csv_path = save_dataframe_csv(
+                    mean_cycle_summary_dataframe,
+                    session_folder,
+                    "sagittal_mean_cycle_summary.csv",
+                )
+        except (KeyError, TypeError, ValueError) as error:
+            mean_cycle_error = str(error)
+
+    if mean_cycle is not None:
+        try:
+            mean_cycle_plot_path = plot_side_mean_cycle(
+                mean_cycle,
+                session_folder,
+            )
+        except (OSError, RuntimeError, ValueError) as error:
+            mean_cycle_plot_error = str(error)
 
     if processed_dataframe is not None and repetitions_dataframe is not None:
         try:
@@ -415,6 +474,21 @@ def save_side_raw_session(
             "OK" if plot_path is not None else "Non généré"
         ),
         "sagittal_plot_error": plot_error,
+        "mean_cycle_status": (
+            "OK" if mean_cycle_csv_path is not None else "Non généré"
+        ),
+        "mean_cycle_error": mean_cycle_error,
+        "mean_cycle_repetitions_included": (
+            mean_cycle["n_cycles"] if mean_cycle is not None else 0
+        ),
+        "mean_cycle_normalized_points": 101,
+        "mean_cycle_normalization": (
+            "time_normalized_start_to_end_0_100_percent"
+        ),
+        "mean_cycle_plot_status": (
+            "OK" if mean_cycle_plot_path is not None else "Non généré"
+        ),
+        "mean_cycle_plot_error": mean_cycle_plot_error,
         "heel_lift_plot_threshold_deg": (HEEL_LIFT_SCREENING_THRESHOLD_DEG),
         "secondary_ankle_and_foot_metrics": "experimental",
         "data_stages": (
@@ -437,6 +511,7 @@ def save_side_raw_session(
             report_text = build_side_report(
                 repetition_metrics_dataframe,
                 metadata,
+                mean_cycle_summary,
             )
             report_path = save_text_report(
                 report_text,
@@ -453,7 +528,9 @@ def save_side_raw_session(
 
     if report_path is not None:
         metadata["data_stages"] = (
-            "raw_processed_segmented_measured_and_reported"
+            "raw_processed_segmented_measured_mean_cycle_and_reported"
+            if mean_cycle_csv_path is not None
+            else "raw_processed_segmented_measured_and_reported"
         )
 
     metadata_path = save_metadata_txt(
@@ -468,6 +545,9 @@ def save_side_raw_session(
         repetition_metrics_csv_path,
         report_path,
         plot_path,
+        mean_cycle_csv_path,
+        mean_cycle_summary_csv_path,
+        mean_cycle_plot_path,
         metadata_path,
     )
 
@@ -759,6 +839,9 @@ def main() -> list[dict[str, float | str]]:
             repetition_metrics_csv_path,
             report_path,
             plot_path,
+            mean_cycle_csv_path,
+            mean_cycle_summary_csv_path,
+            mean_cycle_plot_path,
             metadata_path,
         ) = saved_paths
         print(f"Données sagittales brutes sauvegardées dans : {csv_path}")
@@ -791,6 +874,24 @@ def main() -> list[dict[str, float | str]]:
 
         if plot_path is not None:
             print("Graphique sagittal sauvegardé dans : " f"{plot_path}")
+
+        if mean_cycle_csv_path is not None:
+            print(
+                "Cycle moyen sagittal sauvegardé dans : "
+                f"{mean_cycle_csv_path}"
+            )
+
+        if mean_cycle_summary_csv_path is not None:
+            print(
+                "Résumé du cycle moyen sauvegardé dans : "
+                f"{mean_cycle_summary_csv_path}"
+            )
+
+        if mean_cycle_plot_path is not None:
+            print(
+                "Graphique du cycle moyen sauvegardé dans : "
+                f"{mean_cycle_plot_path}"
+            )
 
         print(f"Métadonnées sauvegardées dans : {metadata_path}")
 
