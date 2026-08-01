@@ -23,7 +23,7 @@ from ui.gestures import detect_hand_raise
 from vision.landmarks import get_pelvis_y
 
 
-AnalysisFunction = Callable[[Any, Any], dict[str, Any]]
+AnalysisFunction = Callable[[Any, Any, int, int], dict[str, Any]]
 DisplayFunction = Callable[
     [np.ndarray, dict[str, Any], SessionManager],
     None,
@@ -143,6 +143,8 @@ def run_pose_analysis(
                 analysis_results = analyze_landmarks(
                     landmarks,
                     mp_pose.PoseLandmark,
+                    image.shape[1],
+                    image.shape[0],
                 )
 
                 if session.is_baseline() and baseline_callback is not None:

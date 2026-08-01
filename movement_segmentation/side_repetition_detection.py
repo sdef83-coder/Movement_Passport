@@ -12,6 +12,12 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from movement_segmentation.repetition_boundaries import (
+    compute_valley_search_limits,
+    find_boundary_after_peak,
+    find_boundary_before_peak,
+)
+
 
 @dataclass(frozen=True)
 class SideRepetitionDetectionConfig:
@@ -179,80 +185,6 @@ def _select_separated_peaks(
     return sorted(selected_peaks)
 
 
-def _find_boundary_before_peak(
-    signal: np.ndarray,
-    peak_index: int,
-    search_limit: int,
-    threshold: float,
-) -> tuple[int, bool]:
-    index = peak_index
-
-    while (
-        index > search_limit
-        and np.isfinite(signal[index])
-        and signal[index] > threshold
-    ):
-        index -= 1
-
-    complete = (
-        np.isfinite(signal[index])
-        and signal[index] <= threshold
-    )
-
-    return index, bool(complete)
-
-
-def _find_boundary_after_peak(
-    signal: np.ndarray,
-    peak_index: int,
-    search_limit: int,
-    threshold: float,
-) -> tuple[int, bool]:
-    index = peak_index
-
-    while (
-        index < search_limit
-        and np.isfinite(signal[index])
-        and signal[index] > threshold
-    ):
-        index += 1
-
-    complete = (
-        np.isfinite(signal[index])
-        and signal[index] <= threshold
-    )
-
-    return index, bool(complete)
-
-
-def _compute_search_limits(
-    signal: np.ndarray,
-    selected_peaks: list[int],
-) -> tuple[list[int], list[int]]:
-    """Utilise les vallées entre pics pour créer des zones disjointes."""
-
-    valleys = []
-
-    for left_peak, right_peak in zip(
-        selected_peaks[:-1],
-        selected_peaks[1:],
-    ):
-        between_values = signal[left_peak : right_peak + 1]
-
-        if np.any(np.isfinite(between_values)):
-            valley_offset = int(np.nanargmin(between_values))
-            valley_index = left_peak + valley_offset
-        else:
-            valley_index = (left_peak + right_peak) // 2
-
-        valleys.append(valley_index)
-
-    left_limits = [0] + valleys
-    right_limits = valleys + [len(signal) - 1]
-
-    return left_limits, right_limits
-
-
 def detect_side_repetitions(
     processed_dataframe: pd.DataFrame,
     config: SideRepetitionDetectionConfig | None = None,
@@ -305,7 +237,7 @@ def detect_side_repetitions(
     if not selected_peaks:
         return []
 
-    left_limits, right_limits = _compute_search_limits(
+    left_limits, right_limits = compute_valley_search_limits(
         signal,
         selected_peaks,
     )
@@ -319,13 +251,13 @@ def detect_side_repetitions(
             config.boundary_fraction * peak_value,
         )
 
-        start_index, start_complete = _find_boundary_before_peak(
+        start_index, start_complete = find_boundary_before_peak(
             signal,
             peak_index,
             left_limits[peak_position],
             boundary_threshold,
         )
-        end_index, end_complete = _find_boundary_after_peak(
+        end_index, end_complete = find_boundary_after_peak(
             signal,
             peak_index,
             right_limits[peak_position],

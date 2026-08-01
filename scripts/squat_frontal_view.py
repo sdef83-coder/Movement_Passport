@@ -50,7 +50,7 @@ from reporting.saving import (
     save_text_report,
 )
 
-from tests.fppa_front_view import analyze_fppa_front_view
+from movement_analysis.squat_front_view import analyze_fppa_front_view
 
 from interpretation.fppa_interpretation import interpret_fppa
 
@@ -198,6 +198,8 @@ while camera.isOpened():
         test_results = analyze_fppa_front_view(
             landmarks,
             mp_pose.PoseLandmark,
+            image_width=image.shape[1],
+            image_height=image.shape[0],
         )
 
         left_fppa = test_results["left_fppa"]
@@ -369,8 +371,9 @@ repetitions = build_repetitions_from_adaptive_baseline(
     filtered_pelvis_y=filtered_pelvis_y,
     bottom_peaks=pelvis_peaks,
     baseline_values=baseline_values,
-    amplitude_fraction=0.05,
+    amplitude_fraction=0.10,
     min_duration_s=0.5,
+    max_duration_s=8.0,
 )
 
 repetition_metrics = []
@@ -482,6 +485,12 @@ metadata = {
     "global_interpretation": global_interpretation,
     "pelvis_y_baseline_mean": baseline_values.get("pelvis_y_mean", None),
     "pelvis_y_baseline_std": baseline_values.get("pelvis_y_std", None),
+    "repetitions_detected": len(repetitions),
+    "segmentation_signal": "pelvis_y_filtered",
+    "segmentation_boundary_method": (
+        "adaptive_threshold_with_neighboring_valleys"
+    ),
+    "segmentation_boundary_fraction": 0.10,
 }
 metadata_path = save_metadata_txt(metadata, session_folder)
 print(f"Métadonnées sauvegardées dans : {metadata_path}")

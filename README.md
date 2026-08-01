@@ -61,7 +61,7 @@ Le script peut aussi être lancé depuis un terminal ouvert à la racine du proj
 python scripts/squat_side_view.py
 ```
 
-## Analyser une vidéo enregistrée
+## Analyser une vidéo sagittale enregistrée
 
 Le module sagittal peut également analyser une vidéo déjà enregistrée avec un téléphone ou une autre caméra. Les calculs, la segmentation et les rapports sont identiques à ceux du mode webcam.
 
@@ -86,6 +86,31 @@ python scripts/squat_side_video.py
 ```
 
 Une vidéo sans 3 secondes de posture debout exploitable est volontairement refusée. Cette sécurité évite de produire des angles relatifs et des indicateurs de vitesse à partir d'une mauvaise référence.
+
+## Analyser une vidéo frontale enregistrée
+
+Le module frontal accepte maintenant les vidéos filmées avec un téléphone ou
+une autre caméra. Dans Spyder, ouvrez `scripts/squat_front_video.py`, puis
+exécutez le fichier avec **F5**.
+
+1. Choisissez la vidéo dans la fenêtre de sélection.
+2. Indiquez à quelle seconde commence la posture debout immobile. Appuyez sur
+   **Entrée** si elle commence au début de la vidéo.
+3. Les trois secondes suivantes sont utilisées comme baseline.
+4. Le reste de la vidéo est analysé de face et les résultats sont enregistrés
+   dans un nouveau sous-dossier `fppa_front_view_*` de `results/`.
+
+Le mode vidéo frontal produit les données FPPA, les déviations gauche et
+droite, les répétitions, les vitesses du bassin, le cycle moyen, les graphiques
+et le rapport clinique descriptif. Une vidéo `frontal_annotated.mp4` montre le
+squelette, les segments hanche-genou-cheville, les FPPA et les déviations
+calculées image par image. Les coordonnées sont corrigées selon les
+dimensions réelles de l'image afin de conserver les mêmes mesures en portrait
+et en paysage.
+
+```bash
+python scripts/squat_front_video.py
+```
 
 ## Protocole de prise de vue
 

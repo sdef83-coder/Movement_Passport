@@ -4,7 +4,7 @@ from app.analysis_pipeline import run_pose_analysis
 
 from baseline.baseline import BaselineRecorder
 
-from tests.fppa_front_view import analyze_fppa_front_view
+from movement_analysis.squat_front_view import analyze_fppa_front_view
 
 from ui.display import (
     display_quality_warning,
@@ -18,7 +18,12 @@ from ui.display import (
 baseline_recorder = BaselineRecorder()
 
 
-def analyze_front_landmarks(landmarks, pose_landmark):
+def analyze_front_landmarks(
+    landmarks,
+    pose_landmark,
+    image_width,
+    image_height,
+):
     """
     Adapte l'analyse frontale existante au pipeline générique.
     """
@@ -26,6 +31,8 @@ def analyze_front_landmarks(landmarks, pose_landmark):
     results = analyze_fppa_front_view(
         landmarks,
         pose_landmark,
+        image_width=image_width,
+        image_height=image_height,
     )
 
     # Nom standardisé utilisé dans les données enregistrées.

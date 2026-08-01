@@ -54,7 +54,7 @@ def _open_video_dialog() -> str:
 
         try:
             return filedialog.askopenfilename(
-                title="Choisir la vidéo du squat sagittal",
+                title="Choisir la vidéo du squat",
                 filetypes=(
                     ("Vidéos", "*.mp4 *.mov *.m4v *.avi *.mkv"),
                     ("Tous les fichiers", "*.*"),
