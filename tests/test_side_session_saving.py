@@ -86,6 +86,11 @@ class SideSessionSavingTests(unittest.TestCase):
                     analysis_side="right",
                     baseline_visibility_summary=baseline_visibility,
                     failed_baseline_attempts=1,
+                    source="video_file",
+                    acquisition_metadata={
+                        "source_file_name": "phone_squat.mp4",
+                        "source_fps": 30.0,
+                    },
                 )
             finally:
                 side_script.RESULTS_FOLDER = original_results_folder
@@ -97,6 +102,12 @@ class SideSessionSavingTests(unittest.TestCase):
 
             self.assertIn("heel_visibility", raw_dataframe.columns)
             self.assertIn("analysis_side : right", metadata_text)
+            self.assertIn("source : video_file", metadata_text)
+            self.assertIn(
+                "source_file_name : phone_squat.mp4",
+                metadata_text,
+            )
+            self.assertIn("source_fps : 30.0", metadata_text)
             self.assertIn("failed_baseline_attempts : 1", metadata_text)
             self.assertIn(
                 "baseline_heel_visibility_mean : 0.9",

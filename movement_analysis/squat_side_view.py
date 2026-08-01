@@ -51,15 +51,25 @@ def _get_side_landmarks(
     raise ValueError("side doit être égal à 'left' ou 'right'.")
 
 
-def _xy(landmark) -> tuple[float, float]:
-    """Extrait les coordonnées image normalisées (x, y)."""
+def _xy(
+    landmark,
+    image_width: float,
+    image_height: float,
+) -> tuple[float, float]:
+    """Convertit un repère MediaPipe normalisé en coordonnées pixels."""
 
-    return float(landmark.x), float(landmark.y)
+    return (
+        float(landmark.x) * image_width,
+        float(landmark.y) * image_height,
+    )
 
 
 def analyze_squat_side_view(
     landmarks,
     pose_landmark,
+    *,
+    image_width: float,
+    image_height: float,
     side: str = "left",
     facing_direction: str = "auto",
     neutral_ankle_angle: float = np.nan,
@@ -68,18 +78,32 @@ def analyze_squat_side_view(
 ) -> dict[str, float | str]:
     """Calcule les angles sagittaux du squat pour un côté du corps."""
 
+    if (
+        not np.isfinite(image_width)
+        or not np.isfinite(image_height)
+        or image_width <= 0
+        or image_height <= 0
+    ):
+        raise ValueError(
+            "image_width et image_height doivent etre strictement positifs."
+        )
+
     selected = _get_side_landmarks(
         landmarks,
         pose_landmark,
         side,
     )
 
-    shoulder_xy = _xy(selected["shoulder"])
-    hip_xy = _xy(selected["hip"])
-    knee_xy = _xy(selected["knee"])
-    ankle_xy = _xy(selected["ankle"])
-    heel_xy = _xy(selected["heel"])
-    foot_index_xy = _xy(selected["foot_index"])
+    shoulder_xy = _xy(selected["shoulder"], image_width, image_height)
+    hip_xy = _xy(selected["hip"], image_width, image_height)
+    knee_xy = _xy(selected["knee"], image_width, image_height)
+    ankle_xy = _xy(selected["ankle"], image_width, image_height)
+    heel_xy = _xy(selected["heel"], image_width, image_height)
+    foot_index_xy = _xy(
+        selected["foot_index"],
+        image_width,
+        image_height,
+    )
 
     if facing_direction == "auto":
         resolved_facing_direction = infer_facing_direction(

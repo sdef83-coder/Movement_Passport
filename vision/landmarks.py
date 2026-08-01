@@ -1,4 +1,9 @@
-def get_point(landmarks, landmark_name):
+def get_point(
+    landmarks,
+    landmark_name,
+    image_width=1.0,
+    image_height=1.0,
+):
     """
     Récupère les coordonnées 2D d'un marqueur MediaPipe.
 
@@ -6,7 +11,10 @@ def get_point(landmarks, landmark_name):
     landmark_name : ex. mp_pose.PoseLandmark.RIGHT_KNEE
     """
     point = landmarks[landmark_name.value]
-    return [point.x, point.y]
+    return [
+        point.x * image_width,
+        point.y * image_height,
+    ]
 
 
 def get_visibility(landmarks, landmark_name):

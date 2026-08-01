@@ -1,5 +1,11 @@
 import numpy as np
 
+from movement_segmentation.repetition_boundaries import (
+    compute_valley_search_limits,
+    find_boundary_after_peak,
+    find_boundary_before_peak,
+)
+
 
 def build_repetitions_from_bottom_peaks(
     df,
@@ -218,6 +224,7 @@ def build_repetitions_from_adaptive_baseline(
     baseline_values,
     amplitude_fraction=0.10,
     min_duration_s=0.5,
+    max_duration_s=8.0,
 ):
     """
     Segmente les répétitions à partir des points bas détectés.
@@ -226,6 +233,7 @@ def build_repetitions_from_adaptive_baseline(
     - l'amplitude est calculée par rapport à la baseline ;
     - un seuil propre à la répétition est défini ;
     - le début et la fin correspondent aux franchissements de ce seuil.
+    - la recherche est bornée par les vallées entre les pics voisins.
 
     pelvis_y augmente lorsque le bassin descend.
     """
@@ -238,9 +246,23 @@ def build_repetitions_from_adaptive_baseline(
     if len(peaks) == 0:
         return repetitions
 
+    if not 0 < amplitude_fraction < 1:
+        raise ValueError("amplitude_fraction doit etre compris entre 0 et 1.")
+    if min_duration_s <= 0 or max_duration_s < min_duration_s:
+        raise ValueError("Les limites de duree des repetitions sont invalides.")
+
+    peaks = np.unique(peaks[(peaks >= 0) & (peaks < len(signal))])
+    if len(peaks) == 0:
+        return repetitions
+
     baseline = float(baseline_values["pelvis_y_mean"])
 
-    for peak_idx in peaks:
+    left_limits, right_limits = compute_valley_search_limits(
+        signal,
+        peaks,
+    )
+
+    for peak_position, peak_idx in enumerate(peaks):
         bottom_value = signal[peak_idx]
         amplitude = bottom_value - baseline
 
@@ -251,18 +273,23 @@ def build_repetitions_from_adaptive_baseline(
         movement_threshold = baseline + amplitude_fraction * amplitude
 
         # Chercher le début avant le point bas.
-        start_idx = peak_idx
-
-        while start_idx > 0 and signal[start_idx] > movement_threshold:
-            start_idx -= 1
+        start_idx, start_complete = find_boundary_before_peak(
+            signal,
+            int(peak_idx),
+            left_limits[peak_position],
+            movement_threshold,
+        )
 
         # Chercher la fin après le point bas.
-        end_idx = peak_idx
+        end_idx, end_complete = find_boundary_after_peak(
+            signal,
+            int(peak_idx),
+            right_limits[peak_position],
+            movement_threshold,
+        )
 
-        while (
-            end_idx < len(signal) - 1 and signal[end_idx] > movement_threshold
-        ):
-            end_idx += 1
+        if not start_complete or not end_complete:
+            continue
 
         start_time = float(df.iloc[start_idx]["time_s"])
         bottom_time = float(df.iloc[peak_idx]["time_s"])
@@ -270,7 +297,7 @@ def build_repetitions_from_adaptive_baseline(
 
         duration_s = end_time - start_time
 
-        if duration_s < min_duration_s:
+        if not min_duration_s <= duration_s <= max_duration_s:
             continue
 
         if not start_idx < peak_idx < end_idx:
